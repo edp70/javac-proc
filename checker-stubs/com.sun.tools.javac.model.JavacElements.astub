@@ -1,0 +1,29 @@
+package com.sun.tools.javac.model;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+class JavacElements implements Elements {
+    static JavacElements instance(Context arg0);
+    protected JavacElements(Context arg0);
+    void setContext(Context arg0);
+    PackageSymbol getPackageElement(CharSequence arg0);
+    ClassSymbol getTypeElement(CharSequence arg0);
+    JavacSourcePosition getSourcePosition(Element arg0);
+    JavacSourcePosition getSourcePosition(Element arg0, AnnotationMirror arg1);
+    JavacSourcePosition getSourcePosition(Element arg0, AnnotationMirror arg1, AnnotationValue arg2);
+    JCTree getTree(Element arg0);
+    String getDocComment(Element arg0);
+    PackageElement getPackageOf(Element arg0);
+    boolean isDeprecated(Element arg0);
+    Name getBinaryName(TypeElement arg0);
+    Map<MethodSymbol,Attribute> getElementValuesWithDefaults(AnnotationMirror arg0);
+    FilteredMemberList getAllMembers(TypeElement arg0);
+    List<Compound> getAllAnnotationMirrors(Element arg0);
+    boolean hides(Element arg0, Element arg1);
+    boolean overrides(ExecutableElement arg0, ExecutableElement arg1, TypeElement arg2);
+    String getConstantExpression(Object arg0);
+    void printElements(Writer arg0, Element[] arg1);
+    Name getName(CharSequence arg0);
+    boolean isFunctionalInterface(TypeElement arg0);
+    Pair<JCTree,JCCompilationUnit> getTreeAndTopLevel(Element arg0, @Nullable AnnotationMirror arg1, @Nullable AnnotationValue arg2);
+}

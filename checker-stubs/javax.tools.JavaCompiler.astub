@@ -1,0 +1,13 @@
+package javax.tools;
+
+import org.checkerframework.checker.nullness.qual.*;
+
+interface JavaCompiler extends Tool, OptionChecker {
+    CompilationTask getTask(@Nullable Writer arg0, @Nullable JavaFileManager arg1, @Nullable DiagnosticListener<? super JavaFileObject> arg2, @Nullable Iterable<String> arg3, @Nullable Iterable<String> arg4, @Nullable Iterable<? extends JavaFileObject> arg5);
+    StandardJavaFileManager getStandardFileManager(@Nullable DiagnosticListener<? super JavaFileObject> arg0, @Nullable Locale arg1, @Nullable Charset arg2);
+}
+interface JavaCompiler$CompilationTask extends Callable<Boolean> {
+    void setProcessors(Iterable<? extends Processor> arg0);
+    void setLocale(Locale arg0);
+    Boolean call();
+}

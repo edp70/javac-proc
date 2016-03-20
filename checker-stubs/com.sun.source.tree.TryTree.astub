@@ -1,0 +1,10 @@
+package com.sun.source.tree;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+interface TryTree extends StatementTree {
+    BlockTree getBlock();
+    List<? extends CatchTree> getCatches();
+    @Nullable BlockTree getFinallyBlock();
+    List<? extends Tree> getResources();
+}

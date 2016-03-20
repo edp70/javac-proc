@@ -1,0 +1,173 @@
+<project name="javac-proc" default="all">
+
+  <property file="build.properties"/>
+
+  <property name="checker.home" value="/opt/checker-1.9"/>
+  <property name="checker.javac" value="${checker.home}/checker/bin/javac"/>
+
+  <property name="junit.jar" location="/opt/junit-4.10.jar"/>
+  <property name="javac.jar" location="${checker.home}/checker/dist/javac.jar"/>
+  <property name="checker.jar" location="${checker.home}/checker/dist/checker.jar"/>
+
+  <property name="java.src.version" value="1.8"/>
+  <property name="java.tgt.version" value="1.8"/>
+
+  <property name="src.dir" location="src"/>
+  <property name="lib.dir" location="lib"/>
+  <property name="build.dir" location="build"/>
+  <property name="dist.dir" location="dist"/>
+  <property name="checker.stubs.dir" location="checker-stubs"/>
+
+  <property name="main.javac.processors" value="org.checkerframework.checker.nullness.NullnessChecker"/>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <!-- main -->
+
+  <property name="main.src.dir" location="${src.dir}/main/java"/>
+  <property name="main.build.dir" location="${build.dir}/main"/>
+  <property name="main.classes.dir" location="${main.build.dir}/classes"/>
+
+  <path id="main.classpath">
+    <fileset dir="${lib.dir}"/>
+  </path>
+  <!-- XXX we're getting JDK tools.jar implicitly from checker javac... -->
+
+  <target name="main.clean">
+    <delete dir="${main.classes.dir}"/>
+    <delete dir="${main.build.dir}"/>
+  </target>
+
+  <target name="main.compile" depends="main.clean">
+    <mkdir dir="${main.classes.dir}"/>
+    <javac debug="true"
+           fork="true"
+           executable="${checker.javac}"
+           includeAntRuntime="false"
+           source="${java.src.version}"
+           target="${java.tgt.version}"
+           destdir="${main.classes.dir}">
+      <src path="${main.src.dir}"/>
+      <include name="**/*.java"/>
+      <classpath refid="main.classpath"/>
+      <compilerarg line="-Xdiags:verbose"/>
+      <compilerarg line="-Xlint:unchecked"/>
+      <compilerarg line="-processor ${main.javac.processors}"/>
+      <compilerarg line="-Alint=forbidnonnullarraycomponents"/>
+      <compilerarg line="-Astubs=${checker.stubs.dir}"/>
+      <compilerarg line="-AstubWarnIfNotFound"/>
+      <compilerarg line="-AprintErrorStack"/>
+    </javac>
+  </target>
+
+  <!-- dist -->
+
+  <property name="jar.name" value="${ant.project.name}"/>
+  <property name="dist.jar" location="${dist.dir}/${jar.name}.jar"/>
+
+  <target name="dist.clean">
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <target name="dist" depends="dist.clean,main.compile">
+    <mkdir dir="${dist.dir}"/>
+    <jar destfile="${dist.jar}">
+      <fileset dir="${main.classes.dir}"/>
+    </jar>
+  </target>
+
+  <!-- test -->
+
+  <property name="test.src.dir" location="${src.dir}/test/java"/>
+  <property name="test.build.dir" location="${build.dir}/test"/>
+  <property name="test.classes.dir" location="${test.build.dir}/classes"/>
+
+  <path id="test.classpath">
+    <fileset file="${dist.jar}"/>
+    <fileset file="${junit.jar}"/>
+    <fileset file="${javac.jar}"/>
+    <fileset file="${checker.jar}"/>
+  </path>
+
+  <target name="test.clean">
+    <delete dir="${test.classes.dir}"/>
+    <delete dir="${test.build.dir}"/>
+  </target>
+
+  <!-- "just.test.compile" compiles src/test, without compiling src/main -->
+  <target name="just.test.compile" depends="test.clean">
+    <mkdir dir="${test.classes.dir}"/>
+    <javac debug="true"
+           fork="true"
+           executable="${checker.javac}"
+           includeAntRuntime="false"
+           source="${java.src.version}"
+           target="${java.tgt.version}"
+           destdir="${test.classes.dir}">
+      <src path="${test.src.dir}"/>
+      <include name="**/*.java"/>
+      <classpath refid="test.classpath"/>
+      <compilerarg line="-Xdiags:verbose"/>
+      <compilerarg line="-Xlint:unchecked"/>
+    </javac>
+  </target>
+
+  <!-- "test.compile" does a full compile, ie compiles src/main and src/test -->
+  <target name="test.compile" depends="dist,just.test.compile"/>
+
+  <!-- (junit) test execution -->
+
+  <property name="junit.out.dir" location="${build.dir}/junit"/>
+  <property name="test.timeout.millis" value="60000"/> <!-- 60 seconds (NB per test class) -->
+  <property name="test.out.dir" location="${junit.out.dir}/output"/>
+  <property name="test.report.dir" location="${junit.out.dir}/report"/>
+
+  <path id="test.run.classpath">
+    <path refid="test.classpath"/>
+    <pathelement location="${test.classes.dir}"/>
+    <pathelement location="${lib.dir}"/>
+  </path>
+
+  <target name="test.run.clean">
+    <delete dir="${junit.out.dir}"/>
+  </target>
+
+  <!-- "just.test" compiles and runs tests, without compiling src/main -->
+  <target name="just.test" depends="just.test.compile">
+    <delete dir="${test.report.dir}"/>
+    <delete dir="${test.out.dir}"/>
+    <mkdir dir="${test.out.dir}"/>
+    <mkdir dir="${test.report.dir}"/>
+    <junit errorProperty="test.failed"
+           failureProperty="test.failed"
+           timeout="${test.timeout.millis}"
+           fork="yes">
+      <formatter type="brief"/>
+      <formatter type="xml"/>
+      <classpath refid="test.run.classpath"/>
+      <!-- TheElementsOfAntStyle "single test case trick" -->
+      <test name="${testcase}" todir="${test.out.dir}" if="testcase"/>
+      <batchtest todir="${test.out.dir}" unless="testcase">
+        <fileset dir="${test.classes.dir}" includes="**/*Test.class"/>
+      </batchtest>
+    </junit>
+
+    <junitreport todir="${test.out.dir}">
+      <fileset dir="${test.out.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${test.report.dir}"/>
+    </junitreport>
+
+    <fail if="test.failed" message="Test(s) failed. See ${test.out.dir} and ${test.report.dir}/index.html"/>
+  </target>
+
+  <!-- "test" does a full build: compile src/main, compile src/test, run tests -->
+  <target name="test" depends="test.compile,just.test"/>
+
+  <target name="all" depends="test"/>
+
+</project>

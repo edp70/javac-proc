@@ -1,0 +1,20 @@
+package com.sun.tools.javac.tree;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+class JCTree$JCTry extends JCStatement implements TryTree {
+    JCBlock body;
+    List<JCCatch> catchers;
+    @Nullable JCBlock finalizer;
+    @Nullable List<JCTree> resources;
+    boolean finallyCanCompleteNormally;
+    protected JCTry(@Nullable List<JCTree> arg0, JCBlock arg1, List<JCCatch> arg2, @Nullable JCBlock arg3);
+    void accept(Visitor arg0);
+    Kind getKind();
+    JCBlock getBlock();
+    List<JCCatch> getCatches();
+    @Nullable JCBlock getFinallyBlock();
+    <R, D> R accept(TreeVisitor<R,D> arg0, D arg1);
+    @Nullable List<JCTree> getResources();
+    Tag getTag();
+}

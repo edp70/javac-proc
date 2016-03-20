@@ -1,0 +1,65 @@
+package com.sun.source.util;
+
+import com.sun.source.tree.*;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+class TreeScanner<R extends @Nullable Object, P extends @Nullable Object> implements TreeVisitor<R,P> {
+    TreeScanner();
+    @Nullable R scan(@Nullable Tree arg0, P arg1);
+    @Nullable R scan(Iterable<? extends Tree> arg0, P arg1);
+    R reduce(R arg0, R arg1);
+    R visitCompilationUnit(CompilationUnitTree arg0, P arg1);
+    R visitImport(ImportTree arg0, P arg1);
+    R visitClass(ClassTree arg0, P arg1);
+    R visitMethod(MethodTree arg0, P arg1);
+    R visitVariable(VariableTree arg0, P arg1);
+    R visitEmptyStatement(EmptyStatementTree arg0, P arg1);
+    R visitBlock(BlockTree arg0, P arg1);
+    R visitDoWhileLoop(DoWhileLoopTree arg0, P arg1);
+    R visitWhileLoop(WhileLoopTree arg0, P arg1);
+    R visitForLoop(ForLoopTree arg0, P arg1);
+    R visitEnhancedForLoop(EnhancedForLoopTree arg0, P arg1);
+    R visitLabeledStatement(LabeledStatementTree arg0, P arg1);
+    R visitSwitch(SwitchTree arg0, P arg1);
+    R visitCase(CaseTree arg0, P arg1);
+    R visitSynchronized(SynchronizedTree arg0, P arg1);
+    R visitTry(TryTree arg0, P arg1);
+    R visitCatch(CatchTree arg0, P arg1);
+    R visitConditionalExpression(ConditionalExpressionTree arg0, P arg1);
+    R visitIf(IfTree arg0, P arg1);
+    R visitExpressionStatement(ExpressionStatementTree arg0, P arg1);
+    R visitBreak(BreakTree arg0, P arg1);
+    R visitContinue(ContinueTree arg0, P arg1);
+    R visitReturn(ReturnTree arg0, P arg1);
+    R visitThrow(ThrowTree arg0, P arg1);
+    R visitAssert(AssertTree arg0, P arg1);
+    R visitMethodInvocation(MethodInvocationTree arg0, P arg1);
+    R visitNewClass(NewClassTree arg0, P arg1);
+    R visitNewArray(NewArrayTree arg0, P arg1);
+    R visitLambdaExpression(LambdaExpressionTree arg0, P arg1);
+    R visitParenthesized(ParenthesizedTree arg0, P arg1);
+    R visitAssignment(AssignmentTree arg0, P arg1);
+    R visitCompoundAssignment(CompoundAssignmentTree arg0, P arg1);
+    R visitUnary(UnaryTree arg0, P arg1);
+    R visitBinary(BinaryTree arg0, P arg1);
+    R visitTypeCast(TypeCastTree arg0, P arg1);
+    R visitInstanceOf(InstanceOfTree arg0, P arg1);
+    R visitArrayAccess(ArrayAccessTree arg0, P arg1);
+    R visitMemberSelect(MemberSelectTree arg0, P arg1);
+    R visitMemberReference(MemberReferenceTree arg0, P arg1);
+    R visitIdentifier(IdentifierTree arg0, P arg1);
+    R visitLiteral(LiteralTree arg0, P arg1);
+    R visitPrimitiveType(PrimitiveTypeTree arg0, P arg1);
+    R visitArrayType(ArrayTypeTree arg0, P arg1);
+    R visitParameterizedType(ParameterizedTypeTree arg0, P arg1);
+    R visitUnionType(UnionTypeTree arg0, P arg1);
+    R visitIntersectionType(IntersectionTypeTree arg0, P arg1);
+    R visitTypeParameter(TypeParameterTree arg0, P arg1);
+    R visitWildcard(WildcardTree arg0, P arg1);
+    R visitModifiers(ModifiersTree arg0, P arg1);
+    R visitAnnotation(AnnotationTree arg0, P arg1);
+    R visitAnnotatedType(AnnotatedTypeTree arg0, P arg1);
+    R visitOther(Tree arg0, P arg1);
+    R visitErroneous(ErroneousTree arg0, P arg1);
+}

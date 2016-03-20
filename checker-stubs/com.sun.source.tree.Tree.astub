@@ -1,0 +1,8 @@
+package com.sun.source.tree;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+interface Tree {
+    Kind getKind();
+    <R extends @Nullable Object, D extends @Nullable Object> R accept(TreeVisitor<R,D> arg0, D arg1);
+}

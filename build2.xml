@@ -1,0 +1,23 @@
+<project name="javac-proc" default="all">
+
+  <!-- Same as regular build but compiles src/main with
+       ReturnViaBreak1 and *without* NullnessChecker.
+
+       Does not run NullnessChecker because there are some
+       transformations done by RVB1 which produce code for which
+       Checker produces false positive errors, eg having to do with
+       control flow and finally blocks - ie exactly the problem all
+       this code was written to solve in the first place.
+
+       Requires regular build to be run first (so that RVB1 is defined
+       in dist/whatever.jar). -->
+
+  <property name="main.javac.processors" value="edp.javac.proc.ReturnViaBreak1"/>
+
+  <!-- XXX depending on 'lib' being empty... initial attempt to add 'dist' to 'main.classpath' didn't work... -->
+  <property name="lib.dir" location="dist"/>
+  <property name="dist.dir" location="dist2"/>
+
+  <import file="build.xml"/>
+
+</project>

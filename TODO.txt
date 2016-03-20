@@ -1,0 +1,138 @@
+== bugs ==
+
+ * FinallyRemover: AbstractTryTests testTryExceptionVsFinallyError is
+   failing due to reachability issues, essentially. Orig source:
+
+        public class Foo {
+            public static final String FOO = "foo";
+            public String foo() {
+                try {
+                    try {
+                        throw new Exception();
+                    } finally {
+                        throw new Error(FOO);
+                    }
+                } catch (Error e) {
+                    return e.getMessage();
+                }
+            }
+        }
+
+   Transformed source (cleaned up a bit):
+
+        public class Foo {
+            public static final String FOO = "foo";
+            public String foo() {
+                String r$0;
+                R$1: {
+                    try {
+                        if (true) try {
+                            throw new Exception();
+                        } catch (final java.lang.Throwable t$0) {
+                            if (true) throw new Error(FOO);
+                            throw t$0;
+                        }
+                        throw new Error(FOO);
+                    } catch (Error e) {
+                        r$0 = e.getMessage();
+                        break R$1;
+                    }
+                }
+                return r$0;
+            }
+        }
+
+   Because of the "if (true)" wrapping the "throw new Error(FOO)" (the
+   first one, in the finally block), the "throw t$0" is considered
+   reachable, even though it's really not. That causes Exception (from
+   "throw new Exception()") to be considered throwable (via "throw
+   t$0") from the finally block, and thus the method, even though it's
+   really not. That causes compile error due to the undeclared checked
+   exception.
+
+   If one removes the "if (true)" on the "throw new Error(FOO)", then
+   the "throw t$0" is considered unreachable - and javac will reject
+   the code for that reason.
+
+   AFAICT, to truly solve this requires proper "can complete normally"
+   analysis, which is non-trivial.
+
+   Essentially this same problem eventually causes problems for
+   Checker, too; after javac's ANALYZE phase, we remove the "if
+   (true)" wrappers, to avoid Checker false positives, but *that*
+   causes unreachable code, which then causes other Checker errors,
+   such as the following:
+
+    [javac] /home/coding/wc/javac-proc/trunk/src/main/java/edp/javac/copier/JavacCopier.java:42: error: [dereference.of.nullable] dereference of possibly-null reference cc
+    [javac]                 final Set<Class<?>> set = cc.getClasses();
+    [javac]                                           ^
+    [javac] /home/coding/wc/javac-proc/trunk/src/main/java/edp/javac/copier/JavacCopier.java:43: error: [dereference.of.nullable] dereference of possibly-null reference set
+    [javac]                 if (!set.isEmpty())
+    [javac]                      ^
+
+ * general: there are probably other cases where a generated var decl
+   needs to have its source position ("pos" field) set, as done in
+   r4358; see AbstractTryTests testAnonymousInnerClass testcase.
+
+   AbstractTryTests wrapAnonInner does seem to have revealed other
+   problems.
+
+   debugging idea..... would be nice if Tree{Printer,Dumper}{1,2}
+   output could be printed for failing tests only. would be nice if
+   it could be dumped to files instead of stdout too...
+
+== Checker ==
+
+Why does Checker allow "m.sym" (where m is javac JCMethodDecl) to be
+dereferenced, when it can be null? Is that a bug in a stub file or
+annotated JDK or something? Is it running with unsafe settings?
+
+== Compiler API/impl ==
+
+most critical thing is:
+
+ * ability to compile source which defines multiple classes
+
+UPDATE: This seems to be working now (compiledAndLoad2). Next step is
+probably try to fix AbstractTryTests "xfail" test cases.
+
+(Is there some way to remove the requirement that the caller supply
+the toplevel class name when processing source?)
+
+== modules / dependencies ==
+
+Would like to split up various modules and manage them independently,
+but for now it's convenient to have everything in one tree, with
+minimal dependencies.
+
+Current dependencies:
+
+ * JDK 8             (tested with 1.8.0_66)
+ * Checker Framework (tested with 1.9.10)
+ * JUnit             (tested with 4.10)
+
+== tests ==
+
+ * more tests always good...
+ * code coverage!
+ * would be nice if AbstractTryTests (eg) could read code fragments
+   from files as well as literal strings.
+
+== other ==
+
+ * grep for TODO and XXX...
+
+== code style / hygiene ==
+
+Checkstyle can probably check the following:
+
+ * no unused imports
+ * properly sorted imports
+ * no tabs, no trailing whitespace
+
+== "control" module ==
+
+maybe copy 'control' subpkg from java-misc/jtree as well, even though
+it's pretty much just a sketch, and not sure what it's really good
+for.
+

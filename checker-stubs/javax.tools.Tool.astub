@@ -1,0 +1,8 @@
+package javax.tools;
+
+import org.checkerframework.checker.nullness.qual.*;
+
+interface Tool {
+    int run(@Nullable InputStream arg0, @Nullable OutputStream arg1, @Nullable OutputStream arg2, @Nullable String[] arg3);
+    Set<SourceVersion> getSourceVersions();
+}
