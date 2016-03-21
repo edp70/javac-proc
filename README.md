@@ -22,9 +22,16 @@ Normally one runs Checker something like this:
 The intention is for the "finally desugarer" processor to be run
 before Checker, something like this:
 
-    javac -processor edp.javac.proc.FinallyRemover,org.checkerframework.checker.nullness.NullnessChecker ...
+    javac -processor edp.javac.proc.FinallyRemover1,org.checkerframework.checker.nullness.NullnessChecker ...
 
-In reality, it's a little more complicated.
+In reality, it's a little more complicated. (TODO elaborate on AST
+save/restore to preserve identical codegen, pre- vs post-ANALYZE
+processing, `if (true)` wrapping. Add links to Checker issues and
+discussion.)
+
+Note on processor naming convention: I use a numeric suffix of `1` or
+`2` to indicate whether the processor runs (respectively) before or
+after javac's "ANALYZE" phase. (Checker runs after.)
 
 ## Requirements
 
@@ -36,12 +43,12 @@ In reality, it's a little more complicated.
 To build and test:
 
 Create a build.properties file with "checker.home" set to the location
-of Checker (defaults to /opt/checker-1.9) and with "junit.jar" set to
-the location of the junit JAR file (default to /opt/junit-4.10.jar).
+of Checker (defaults to `/opt/checker-1.9`) and with "junit.jar" set to
+the location of the junit JAR file (defaults to `/opt/junit-4.10.jar`).
 
-Once those dependencies are in place, running "ant" should compile
+Once those dependencies are in place, running `ant` should compile
 everything and run the tests.
 
 The unit tests are currently failing.
 
-For more details, see TODO.txt.
+For more details, see `TODO.txt`.
