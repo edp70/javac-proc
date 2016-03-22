@@ -369,8 +369,8 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
     //             }
     //         }
     //
-    // The following test case failed until I adjusted the start
-    // position of a generated variable.
+    // The following test case failed until I adjusted the source
+    // position of a generated variable (in ReturnViaBreak.java).
     public void testAnonymousClass() {
         _test("public class Foo {"
               + "    private final Object OBJ = new Object() {"

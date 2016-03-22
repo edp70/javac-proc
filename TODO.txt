@@ -1,3 +1,7 @@
+== github ==
+
+turn these TODO items into github issues?
+
 == bugs ==
 
  * FinallyRemover: AbstractTryTests testTryExceptionVsFinallyError is
@@ -80,6 +84,11 @@
    debugging idea..... would be nice if Tree{Printer,Dumper}{1,2}
    output could be printed for failing tests only. would be nice if
    it could be dumped to files instead of stdout too...
+
+== idempotence ==
+
+It would be nice if processors were idempotent. ReturnViaBreak is not,
+I'm pretty sure. Maybe the others are.
 
 == Checker ==
 
