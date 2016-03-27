@@ -107,10 +107,14 @@ public class ReturnViaBreak extends TreeTranslator {
 
     @Override
     public void visitMethodDef(final JCMethodDecl m) {
-        m.body = isCtor(m) ? doCtor(m.body)
+        m.body = translate(process(m));
+        result = m;
+    }
+
+    private JCBlock process(final JCMethodDecl m) {
+        return isCtor(m) ? doCtor(m.body)
             : returnsNonVoid(m) ? doNonVoid(m.body, m)
             : doVoid(m.body);
-        result = m;
     }
 
     private JCBlock doCtor(final JCBlock b) {

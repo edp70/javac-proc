@@ -79,7 +79,19 @@ turn these TODO items into github issues?
    r4358; see AbstractTryTests testAnonymousInnerClass testcase.
 
    AbstractTryTests wrapAnonInner does seem to have revealed other
-   problems.
+   problems. looks like FinallyRemover transformation is being applied
+   but RVB is not, for method within anonymous inner class. probably a
+   simple stupid Visitor mistake... RVB is a TreeTranslator. It only
+   overrides visitMethoDef, to do its thing, but the problem is that
+   *within* a method def there can be other method defs, and it needs
+   to make sure those are translated too. eg even the 'expr' in a
+   "this" or "super" ctor call could have a method def in it - for
+   anonymous class (or possibly lambda?).
+
+   fixing that by running the translator on the new method body (which
+   will find any other method defs within the method def) seems to fix
+   those issues. remaining TODO is to audit other TreeTranslators for
+   same mistake.
 
    debugging idea..... would be nice if Tree{Printer,Dumper}{1,2}
    output could be printed for failing tests only. would be nice if
