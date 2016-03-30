@@ -42,6 +42,7 @@
   </target>
 
   <target name="main.compile" depends="main.clean">
+    <mkdir dir="${lib.dir}"/>
     <mkdir dir="${main.classes.dir}"/>
     <javac debug="true"
            fork="true"
