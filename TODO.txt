@@ -61,11 +61,18 @@ turn these TODO items into github issues?
    AFAICT, to truly solve this requires proper "can complete normally"
    analysis, which is non-trivial.
 
-   Essentially this same problem eventually causes problems for
-   Checker, too; after javac's ANALYZE phase, we remove the "if
-   (true)" wrappers, to avoid Checker false positives, but *that*
-   causes unreachable code, which then causes other Checker errors,
-   such as the following:
+   Seems there are two basic options:
+
+   1. Implement "can complete normally" analysis (maybe even possibly
+      using javac's "AliveAnalyzer" directly? or copy with whatever
+      modifications are necessary...)
+
+   2. run FinallyRemover after javac's ANALYZE phase so it can use
+      the "finallyCanCompleteNormally" flag in JCTry.
+
+   Note that we do need to avoid generating unreachable code even if
+   running after javac's ANALYZE phase, because it eventually causes
+   problems for Checker too, resulting in errors like the following:
 
     [javac] /home/coding/wc/javac-proc/trunk/src/main/java/edp/javac/copier/JavacCopier.java:42: error: [dereference.of.nullable] dereference of possibly-null reference cc
     [javac]                 final Set<Class<?>> set = cc.getClasses();
