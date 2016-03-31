@@ -12,7 +12,7 @@ import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 public class TreePrinter2 extends AbstractProcessor2 {
     @Override
     public void process(final JCCompilationUnit top) {
-        System.out.println("[TreePrinter2] JCCompilationUnit");
+        System.out.println("[TreePrinter2] JCCompilationUnit:");
         System.out.println(top);
     }
 }
