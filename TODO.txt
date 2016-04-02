@@ -123,18 +123,6 @@ Why does Checker allow "m.sym" (where m is javac JCMethodDecl) to be
 dereferenced, when it can be null? Is that a bug in a stub file or
 annotated JDK or something? Is it running with unsafe settings?
 
-== Compiler API/impl ==
-
-most critical thing is:
-
- * ability to compile source which defines multiple classes
-
-UPDATE: This seems to be working now (compiledAndLoad2). Next step is
-probably try to fix AbstractTryTests "xfail" test cases.
-
-(Is there some way to remove the requirement that the caller supply
-the toplevel class name when processing source?)
-
 == modules / dependencies ==
 
 Would like to split up various modules and manage them independently,
