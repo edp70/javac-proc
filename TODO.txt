@@ -104,6 +104,14 @@ turn these TODO items into github issues?
    output could be printed for failing tests only. would be nice if
    it could be dumped to files instead of stdout too...
 
+== other processor ideas ==
+
+ * check the impact of JCTree "pos" field by mutating it. set it to
+   zero everywhere. make it go backwards (start at MAXINT and
+   decrement).
+
+ * StringifyBareAssertions: assert EXPR; => assert EXPR : "EXPR";
+
 == idempotence ==
 
 It would be nice if processors were idempotent. ReturnViaBreak is not,
