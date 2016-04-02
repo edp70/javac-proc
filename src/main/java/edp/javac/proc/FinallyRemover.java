@@ -104,9 +104,7 @@ public class FinallyRemover extends TreeTranslator {
         //     B
         // }
         if (jumps.isEmpty())
-            return canCompleteNormally(_try)
-                ? Block(_try, copy(_finally))
-                : _try;
+            return Block(_try, copy(_finally));
 
         // Otherwise...  Call every "unique" relevant break/continue
         // statement "J1", "J2", etc. Then the translation is:
@@ -196,9 +194,7 @@ public class FinallyRemover extends TreeTranslator {
     //     throw #t;
     // }
     private JCCatch makeCatch(final VarSymbol t, final JCBlock b) {
-        return canCompleteNormally(b)
-            ? Catch(t, Block(b, Throw(t)))
-            : Catch(t, b);
+        return Catch(t, Block(b, Throw(t)));
     }
 
     //
@@ -228,22 +224,6 @@ public class FinallyRemover extends TreeTranslator {
                 return (JCMethodDecl) node;
         }
         throw new RuntimeException("failed to find enclosing method for AST node: " + t);
-    }
-
-    private boolean canCompleteNormally(final JCStatement stmt) {
-        // need Flow for this... but might as well handle some simple
-        // cases?!
-        if (true) return true; // TODO make this configurable
-        return !endsWithReturnOrThrow(stmt);
-    }
-    private boolean endsWithReturnOrThrow(final JCStatement stmt) {
-        return stmt instanceof JCReturn
-            || stmt instanceof JCThrow
-            || (stmt instanceof JCBlock && blockEndsWithReturnOrThrow((JCBlock) stmt));
-    }
-    private boolean blockEndsWithReturnOrThrow(final JCBlock block) {
-        final JCStatement stmt = block.stats.last();
-        return stmt != null ? endsWithReturnOrThrow(stmt) : false;
     }
 
     // lacking real 'canCompleteNormally', need this when running
