@@ -63,10 +63,15 @@ public class FinallyRemover extends TreeTranslator {
         if (_finally != null) {
             orig.finalizer = null;
             orig.finallyCanCompleteNormally = false; // ???
-            result = translate(rewrite(orig, _finally, finallyCanCompleteNormally));
+            result = translate(resolve(rewrite(orig, _finally, finallyCanCompleteNormally)));
             return;
         }
         super.visitTry(orig);
+    }
+
+    private JCTree resolve(final JCTree t) {
+        BreakResolver.getInstance().resolve(t);
+        return t;
     }
 
     private JCTree rewrite(final JCTry orig, final JCBlock _finally, final boolean finallyCanCompleteNormally) {
@@ -344,25 +349,8 @@ public class FinallyRemover extends TreeTranslator {
         return M.Labelled(label, s);
     }
 
-    private JCBreak Break(final Name label, final JCTree target) {
-        final JCBreak ans = M.Break(label);
-        ans.target = target;
-        return ans;
-    }
-
-    private JCBreak Break() {
-        final Name NO_LABEL = null;
-        return M.Break(NO_LABEL);
-    }
-
     private JCBreak Break(final Name label) {
         return M.Break(label);
-    }
-
-    private JCBreak Break(final JCTree target) {
-        final JCBreak ans = Break();
-        ans.target = target;
-        return ans;
     }
 
     private JCTry Try(final @Nullable List<JCTree> resources, final JCBlock body, final List<JCCatch> catchers) {
