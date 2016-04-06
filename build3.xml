@@ -1,13 +1,13 @@
 <project name="javac-proc" default="all">
 
   <!-- Same as regular build but compiles src/main with
-       FinallyRemover1 and IfTrueRemover2 prior to
+       ReturnViaBreak1 and FinallyRemover2 prior to
        NullnessChecker.
 
-       Requires regular build to be run first (so that FR1/ITR2 are
+       Requires regular build to be run first (so that RVB1/FR2 are
        defined in dist/whatever.jar). -->
 
-  <property name="main.javac.processors" value="edp.javac.proc.FinallyRemover1,edp.javac.proc.IfTrueRemover2,org.checkerframework.checker.nullness.NullnessChecker"/>
+  <property name="main.javac.processors" value="edp.javac.proc.ReturnViaBreak1,edp.javac.proc.FinallyRemover2,org.checkerframework.checker.nullness.NullnessChecker"/>
 
   <!-- XXX depending on 'lib' being empty... initial attempt to add 'dist' to 'main.classpath' didn't work... -->
   <property name="lib.dir" location="dist"/>
