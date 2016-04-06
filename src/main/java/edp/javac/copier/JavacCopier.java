@@ -14,6 +14,7 @@ public class JavacCopier extends DeepCopier {
         super(Arrays.asList(RefHandler.getInstance(),
                             PrimitiveHandler.getInstance(),
                             ArrayHandler.getInstance(),
+                            JCBreakHandler.getInstance(),
                             CloneableHandler.getInstance(),
                             JavacListHandler.getInstance(),
                             NullaryCtorHandler.getInstance(),
