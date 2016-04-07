@@ -137,6 +137,30 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
         _t("try {} finally { throw new Error(FOO); }", new Error(FOO));
     }
 
+    public void testFooTransformed() {
+        _t(""
+           + "        String r$0;"
+           + "        R$1: {"
+           + "            {"
+           + "                J0$0: try {"
+           + "                    {"
+           + "                        r$0 = FOO;"
+           + "                        break J0$0;"
+           + "                    }"
+           + "                } catch (final java.lang.Throwable t$0) {"
+           + "                }"
+           + "                {"
+           + "                    {"
+           + "                        r$0 = FOO;"
+           + "                        break R$1;"
+           + "                    }"
+           + "                }"
+           + "            }"
+           + "        }"
+           + "        return r$0;"
+           );
+    }
+
     public void testNested() {
         final String ETF = "try {} finally {}"; // empty try-finally
         _t("try {} finally { " + ETF + " } return FOO;");
@@ -291,6 +315,33 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
     }
     public void test1c() {
         _test(1, "public class Foo { public int foo() { while (true) { try { break; } finally { return 1; }}}}");
+    }
+
+    public void test1cTransformed() {
+        _test(1, ""
+              + "public class Foo {"
+              + "    public int foo() {"
+              + "        int r$0;"
+              + "        R$1: {"
+              + "            while (true) {"
+              + "                {"
+              + "                    J1$0: J0$0: try {"
+              + "                        break J1$0;"
+              + "                    } catch (final java.lang.Throwable t$0) {"
+              + "                    }"
+              + "                    {"
+              + "                        {"
+              + "                            r$0 = 1;"
+              + "                            break R$1;"
+              + "                        }"
+              + "                    }"
+              + "                }"
+              + "            }"
+              + "        }"
+              + "        return r$0;"
+              + "    }"
+              + "}"
+              );
     }
 
     public void testCtorEtc() {

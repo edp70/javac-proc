@@ -59,29 +59,6 @@ public class CompilerTest extends junit.framework.TestCase {
                     + "}";
                 assertEquals(x, ast.toString());
             }
-
-            // cloned AST should be distinct from original
-            //
-            // (XXX why do this? possibly left over from early
-            // experiments attempting to copy AST via clone; maybe we
-            // don't care about this at all any more really.)
-            final Tree ast2 = clone(ast);
-            assertTrue(ast2 != ast);
-
-            // compare dumps of AST vs cloned AST
-            //
-            // (XXX again, maybe this doesn't matter.)
-            {
-                final StringPrintStream s1 = new StringPrintStream();
-                try { DUMPER.withOut(s1.getPrintStream()).print(ast); }
-                finally { s1.close(); }
-
-                final StringPrintStream s2 = new StringPrintStream();
-                try { DUMPER.withOut(s2.getPrintStream()).print(ast2); }
-                finally { s2.close(); }
-
-                assertEquals(s1.toString(), s2.toString());
-            }
         }
 
         // javac toString() produces equivalent (but not identical)

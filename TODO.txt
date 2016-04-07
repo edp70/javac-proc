@@ -2,84 +2,79 @@
 
 turn these TODO items into github issues?
 
+== separation of detection vs mutation ==
+
+ * It might be better if FR/JT were rewritten so that there were
+   something like JT but which just *finds* "escaping" jumps, without
+   mutating anything, first. Then we can rewrite those jumps as
+   appropriate depending on whether finallyCanCompleteNormally, ie
+   as "break #Try" or "break #J1/#J2/etc".
+
+   Similarly, for ReturnViaBreak, could consider something which finds
+   "escaping returns". Specifically, we're interested in return from
+   try/catch which has a finally block. Those are the ones which need
+   to be routed through a copy of the finally block (in order to
+   rewrite without "finally") and therefore need to be translated to a
+   "break". Rewriting just those returns would eliminate unnecessary
+   changes and have the nice side effect of making RVB idempotent (as
+   noted below).
+
 == bugs ==
 
- * FinallyRemover: AbstractTryTests testTryExceptionVsFinallyError is
-   failing due to reachability issues, essentially. Orig source:
+ * FullCheckerTest is failing. Checker is rejecting code due to
+   initialization issue with the generated variable holding the return
+   value.
 
-        public class Foo {
-            public static final String FOO = "foo";
-            public String foo() {
-                try {
-                    try {
-                        throw new Exception();
-                    } finally {
-                        throw new Error(FOO);
-                    }
-                } catch (Error e) {
-                    return e.getMessage();
-                }
-            }
-        }
+/Foo.java:1: error: [return.type.incompatible] incompatible types in return.
+public class Foo {
+       ^
+  found   : @UnknownInitialization @Nullable String
+  required: @Initialized @NonNull String
+1 error
+/Foo.java:1: error: [return.type.incompatible] incompatible types in return.
+public class Foo { public int foo() { while (true) { try { break; } finally { return 1; }}}}
+       ^
+  found   : @UnknownInitialization @NonNull int
+  required: @Initialized @NonNull int
+1 error
+------------- ---------------- ---------------
+Testcase: testTryWithBreak(edp.javac.proc.FullCheckerTest):	Caused an ERROR
+compile failed
+java.lang.RuntimeException: compile failed
+	at edp.javac.compiler.CompilerImpl.run(CompilerImpl.java:138)
+	at edp.javac.compiler.CompilerImpl.compileAndLoad(CompilerImpl.java:118)
+	at edp.javac.compiler.AbstractTryTests.run(AbstractTryTests.java:40)
+	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:71)
+	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:75)
+	at edp.javac.compiler.AbstractTryTests._t1(AbstractTryTests.java:107)
+	at edp.javac.compiler.AbstractTryTests._t(AbstractTryTests.java:118)
+	at edp.javac.compiler.AbstractTryTests.testTryWithBreak(AbstractTryTests.java:200)
 
-   Transformed source (cleaned up a bit):
 
-        public class Foo {
-            public static final String FOO = "foo";
-            public String foo() {
-                String r$0;
-                R$1: {
-                    try {
-                        if (true) try {
-                            throw new Exception();
-                        } catch (final java.lang.Throwable t$0) {
-                            if (true) throw new Error(FOO);
-                            throw t$0;
-                        }
-                        throw new Error(FOO);
-                    } catch (Error e) {
-                        r$0 = e.getMessage();
-                        break R$1;
-                    }
-                }
-                return r$0;
-            }
-        }
+Testcase: test1c(edp.javac.proc.FullCheckerTest):	Caused an ERROR
+compile failed
+java.lang.RuntimeException: compile failed
+	at edp.javac.compiler.CompilerImpl.run(CompilerImpl.java:138)
+	at edp.javac.compiler.CompilerImpl.compileAndLoad(CompilerImpl.java:118)
+	at edp.javac.compiler.AbstractTryTests.run(AbstractTryTests.java:40)
+	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:71)
+	at edp.javac.compiler.AbstractTryTests.test1c(AbstractTryTests.java:316)
 
-   Because of the "if (true)" wrapping the "throw new Error(FOO)" (the
-   first one, in the finally block), the "throw t$0" is considered
-   reachable, even though it's really not. That causes Exception (from
-   "throw new Exception()") to be considered throwable (via "throw
-   t$0") from the finally block, and thus the method, even though it's
-   really not. That causes compile error due to the undeclared checked
-   exception.
+   Reducing the "test1c" issue to the following testcase:
 
-   If one removes the "if (true)" on the "throw new Error(FOO)", then
-   the "throw t$0" is considered unreachable - and javac will reject
-   the code for that reason.
+       public class T {
+           public int foo() {
+               int ans;
+               while (true) {
+                   ans = 0;
+                   break;
+               }
+               return ans;
+           }
+       }
 
-   AFAICT, to truly solve this requires proper "can complete normally"
-   analysis, which is non-trivial.
-
-   Seems there are two basic options:
-
-   1. Implement "can complete normally" analysis (maybe even possibly
-      using javac's "AliveAnalyzer" directly? or copy with whatever
-      modifications are necessary...)
-
-   2. run FinallyRemover after javac's ANALYZE phase so it can use
-      the "finallyCanCompleteNormally" flag in JCTry.
-
-   Note that we do need to avoid generating unreachable code even if
-   running after javac's ANALYZE phase, because it eventually causes
-   problems for Checker too, resulting in errors like the following:
-
-    [javac] /home/coding/wc/javac-proc/trunk/src/main/java/edp/javac/copier/JavacCopier.java:42: error: [dereference.of.nullable] dereference of possibly-null reference cc
-    [javac]                 final Set<Class<?>> set = cc.getClasses();
-    [javac]                                           ^
-    [javac] /home/coding/wc/javac-proc/trunk/src/main/java/edp/javac/copier/JavacCopier.java:43: error: [dereference.of.nullable] dereference of possibly-null reference set
-    [javac]                 if (!set.isEmpty())
-    [javac]                      ^
+   Plain javac accepts that, but (plain) Checker does not. Looks like
+   the same problem as with "if (true)"...
 
  * debugging idea: would be nice if Tree{Printer,Dumper}{1,2} output
    could be printed for failing tests only. would be nice if it could
@@ -103,6 +98,9 @@ I'm pretty sure. Maybe the others are.
 Why does Checker allow "m.sym" (where m is javac JCMethodDecl) to be
 dereferenced, when it can be null? Is that a bug in a stub file or
 annotated JDK or something? Is it running with unsafe settings?
+
+Same thing applies to JCBreak.{label,target} and presumably tons of
+other stuff.
 
 == modules / dependencies ==
 

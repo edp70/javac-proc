@@ -12,8 +12,8 @@ public class FullCheckerTest extends AbstractTryTests {
     public FullCheckerTest() {
         super(CompilerImpl
               .getDefault()
-              .withProcessor(FinallyRemover1.class)
-              .withProcessor(IfTrueRemover2.class)
+              .withProcessor(ReturnViaBreak1.class)
+              .withProcessor(FinallyRemover2.class)
               .withProcessor(NullnessChecker.class));
     }
 
