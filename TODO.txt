@@ -88,6 +88,12 @@ java.lang.RuntimeException: compile failed
    changes and have the nice side effect of making RVB idempotent (as
    noted below).
 
+   (Took a shot at implementing the detection part of that last idea
+   in ReturnScanner. In theory, just rewrite RVB to use it. But
+   actually, probably want to keep the current RVB translator for
+   testing purposes. So will need a separate translator/processor,
+   different names, etc.)
+
 == other processor ideas ==
 
  * check the impact of JCTree "pos" field by mutating it. set it to
