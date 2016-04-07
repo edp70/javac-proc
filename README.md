@@ -19,15 +19,16 @@ Normally one runs Checker something like this:
 
     javac -processor org.checkerframework.checker.nullness.NullnessChecker ...
 
-The intention is for the "finally desugarer" processor to be run
-before Checker, something like this:
+Currently, "finally desugaring" can be run before Checker like this:
 
-    javac -processor edp.javac.proc.FinallyRemover1,org.checkerframework.checker.nullness.NullnessChecker ...
+    javac -processor \
+        edp.javac.proc.ReturnViaBreak1,\
+        edp.javac.proc.FinallyRemover2,\
+        org.checkerframework.checker.nullness.NullnessChecker ...
 
-In reality, it's a little more complicated. (TODO elaborate on AST
-save/restore to preserve identical codegen, pre- vs post-ANALYZE
-processing, `if (true)` wrapping. Add links to Checker issues and
-discussion.)
+(TODO elaborate on AST save/restore to preserve identical codegen,
+pre- vs post-ANALYZE processing, `if (true)` wrapping. Add links to
+Checker issues and discussion.)
 
 Note on processor naming convention: I use a numeric suffix of `1` or
 `2` to indicate whether the processor runs (respectively) before or
