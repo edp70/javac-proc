@@ -21,10 +21,9 @@ turn these TODO items into github issues?
 
 == bugs ==
 
- * FullCheckerTest is failing. Checker is rejecting the code due to
+ * FullCheckerTest is failing. Checker is rejecting code due to
    initialization issue with the generated variable holding the return
-   value. TODO: TreeDumper2 on generated transformed source
-   vs. vanilla javac on transformed source.
+   value.
 
 /Foo.java:1: error: [return.type.incompatible] incompatible types in return.
 public class Foo {
@@ -61,6 +60,21 @@ java.lang.RuntimeException: compile failed
 	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:71)
 	at edp.javac.compiler.AbstractTryTests.test1c(AbstractTryTests.java:316)
 
+   Reducing the "test1c" issue to the following testcase:
+
+       public class T {
+           public int foo() {
+               int ans;
+               while (true) {
+                   ans = 0;
+                   break;
+               }
+               return ans;
+           }
+       }
+
+   Plain javac accepts that, but (plain) Checker does not. Looks like
+   the same problem as with "if (true)"...
 
  * general: there are probably other cases where a generated var decl
    needs to have its source position ("pos" field) set, as done in
