@@ -2,23 +2,6 @@
 
 turn these TODO items into github issues?
 
-== separation of detection vs mutation ==
-
- * It might be better if FR/JT were rewritten so that there were
-   something like JT but which just *finds* "escaping" jumps, without
-   mutating anything, first. Then we can rewrite those jumps as
-   appropriate depending on whether finallyCanCompleteNormally, ie
-   as "break #Try" or "break #J1/#J2/etc".
-
-   Similarly, for ReturnViaBreak, could consider something which finds
-   "escaping returns". Specifically, we're interested in return from
-   try/catch which has a finally block. Those are the ones which need
-   to be routed through a copy of the finally block (in order to
-   rewrite without "finally") and therefore need to be translated to a
-   "break". Rewriting just those returns would eliminate unnecessary
-   changes and have the nice side effect of making RVB idempotent (as
-   noted below).
-
 == bugs ==
 
  * FullCheckerTest is failing. Checker is rejecting code due to
@@ -76,9 +59,34 @@ java.lang.RuntimeException: compile failed
    Plain javac accepts that, but (plain) Checker does not. Looks like
    the same problem as with "if (true)"...
 
- * debugging idea: would be nice if Tree{Printer,Dumper}{1,2} output
-   could be printed for failing tests only. would be nice if it could
-   be dumped to files instead of stdout too...
+== testing ==
+
+ * would be nice if Tree{Printer,Dumper}{1,2} output could be printed
+   for failing tests only. would be nice if it could be dumped to
+   files instead of stdout too.
+
+ * more tests always good...
+ * code coverage!
+ * better "xfail" support would be nice.
+ * would be nice if AbstractTryTests (eg) could read code fragments
+   from files as well as literal strings.
+
+== refactoring: separation of detection vs mutation ==
+
+ * It might be better if FR/JT were rewritten so that there were
+   something like JT but which just *finds* "escaping" jumps, without
+   mutating anything, first. Then we can rewrite those jumps as
+   appropriate depending on whether finallyCanCompleteNormally, ie
+   as "break #Try" or "break #J1/#J2/etc".
+
+   Similarly, for ReturnViaBreak, could consider something which finds
+   "escaping returns". Specifically, we're interested in return from
+   try/catch which has a finally block. Those are the ones which need
+   to be routed through a copy of the finally block (in order to
+   rewrite without "finally") and therefore need to be translated to a
+   "break". Rewriting just those returns would eliminate unnecessary
+   changes and have the nice side effect of making RVB idempotent (as
+   noted below).
 
 == other processor ideas ==
 
@@ -113,13 +121,6 @@ Current dependencies:
  * JDK 8             (tested with 1.8.0_66)
  * Checker Framework (tested with 1.9.10)
  * JUnit             (tested with 4.10)
-
-== tests ==
-
- * more tests always good...
- * code coverage!
- * would be nice if AbstractTryTests (eg) could read code fragments
-   from files as well as literal strings.
 
 == other ==
 
