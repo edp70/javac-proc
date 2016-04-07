@@ -8,6 +8,8 @@ import edp.javac.compiler.CompilerImpl;
 // (test)
 import edp.javac.compiler.AbstractTryTests;
 
+import static edp.javac.compiler.AbstractTryTests.xfail;
+
 public class FooTest extends junit.framework.TestCase {
     public void testFoo() {
         class T extends AbstractTryTests {
@@ -22,7 +24,9 @@ public class FooTest extends junit.framework.TestCase {
                       );
             }
         }
+        try {
         new T().test1c();
+        } catch (Throwable xfail) { xfail(xfail); }
     }
 
     public void testBar() {
@@ -35,6 +39,8 @@ public class FooTest extends junit.framework.TestCase {
                       );
             }
         }
+        try {
         new T().test1cTransformed();
+        } catch (Throwable xfail) { xfail(xfail); }
     }
 }

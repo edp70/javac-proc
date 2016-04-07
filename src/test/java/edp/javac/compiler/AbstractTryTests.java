@@ -10,8 +10,9 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
         this.compiler = compiler;
     }
 
-    protected void xfail(final Object... o) {
+    public static void xfail(final Object... o) {
         System.out.println("XFAIL: " + Arrays.toString(o));
+        new AssertionError().printStackTrace();
     }
 
     // static stuff

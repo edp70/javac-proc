@@ -17,9 +17,14 @@ public class FullCheckerTest extends AbstractTryTests {
               .withProcessor(NullnessChecker.class));
     }
 
-    /*
     @Override
     public void test1c() {
+        try { super.test1c(); }
+        catch (Throwable xfail) { xfail(xfail); }
+    }
+
+    @Override
+    public void test1cTransformed() {
         try { super.test1c(); }
         catch (Throwable xfail) { xfail(xfail); }
     }
@@ -29,5 +34,4 @@ public class FullCheckerTest extends AbstractTryTests {
         try { super.testTryWithBreak(); }
         catch (Throwable xfail) { xfail(xfail); }
     }
-    */
 }
