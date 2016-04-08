@@ -26,6 +26,10 @@ Currently, "finally desugaring" can be run before Checker like this:
         edp.javac.proc.FinallyRemover2,\
         org.checkerframework.checker.nullness.NullnessChecker ...
 
+This project itself can be compiled that way by running `ant && ant -f
+build3.xml` instead of just `ant`, although currently `build3.xml`
+fails due to [a bug](https://github.com/edp70/javac-proc/issues/2).
+
 (TODO elaborate on AST save/restore to preserve identical codegen,
 pre- vs post-ANALYZE processing, `if (true)` wrapping. Add links to
 Checker issues and discussion.)
@@ -49,7 +53,5 @@ the location of the junit JAR file (defaults to `/opt/junit-4.10.jar`).
 
 Once those dependencies are in place, running `ant` should compile
 everything and run the tests.
-
-The unit tests are currently failing.
 
 For more details, see `TODO.txt`.

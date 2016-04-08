@@ -59,22 +59,6 @@ java.lang.RuntimeException: compile failed
    Plain javac accepts that, but (plain) Checker does not. Looks like
    the same problem as with "if (true)"...
 
- * I think there are still problems due to FinallyRemover generating
-   unreachable code. Although it is now running after javac's ANALYZE
-   phase, and thus javac doesn't complain about it, I'm pretty sure
-   it's causing problems for Checker, as can be seen (for example) in
-   build3.xml output:
-
-        [javac] /home/coding/github/javac-proc/master/src/main/java/edp/javac/copier/JavacCopier.java:43: error: [dereference.of.nullable] dereference of possibly-null reference cc
-        [javac]                 final Set<Class<?>> set = cc.getClasses();
-        [javac]                                           ^
-        [javac] /home/coding/github/javac-proc/master/src/main/java/edp/javac/copier/JavacCopier.java:44: error: [dereference.of.nullable] dereference of possibly-null reference set
-        [javac]                 if (!set.isEmpty())
-        [javac]                      ^
-        [javac] 2 errors
-
-   TODO: reduced testcase(s) for that.
-
 == testing ==
 
  * would be nice if Tree{Printer,Dumper}{1,2} output could be printed
