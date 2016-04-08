@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import edp.misc.ExpectedFailure;
+
 public abstract class AbstractTryTests extends junit.framework.TestCase {
     private final Compiler compiler;
     public AbstractTryTests(final Compiler compiler) {
@@ -12,7 +14,7 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
 
     public static void xfail(final Object... o) {
         System.out.println("XFAIL: " + Arrays.toString(o));
-        new AssertionError().printStackTrace();
+        new ExpectedFailure().printStackTrace();
     }
 
     // static stuff
