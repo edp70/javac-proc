@@ -190,6 +190,19 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
         _t("try { return FOO.toString(); } finally { System.out.println(\"yo\"); }");
     }
 
+    public void testNonEmptyFinally2() {
+        _t("try { return FOO.toString(); } finally { System.out.println(FOO); }");
+    }
+
+    public void testNonEmptyFinally3() {
+        _t("try { return FOO.toString(); } finally { System.out.println(FOO.length()); }");
+    }
+
+    /** Testcase for https://github.com/edp70/javac-proc/issues/2 */
+    public void testNonEmptyFinally4() {
+        _t("final String ans = FOO; try { return ans.toString(); } finally { System.out.println(ans.length()); }");
+    }
+
     public void testTryWithReturn() {
         _t("try { return \"x\"; } finally { return FOO; }");
     }
