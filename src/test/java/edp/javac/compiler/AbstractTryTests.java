@@ -109,13 +109,26 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
             + "}.toString();\n";
     }
 
+    public String wrapAsTryWithEmptyFinally(final String s) {
+        return wrap("try { " + s + " } finally {}");
+    }
+
+    public String wrapAsFinallyWithEmptyTry(final String s) {
+        return wrap("try {} finally { " + s + " }");
+    }
+
     // different ways to wrap code fragments...
 
+    // XXX TODO some kinda CodeFragmentWrapper enum?
     public void _t1(final String s) { _test(wrap(s)); }
     public void _t2(final String s) { _test(wrapAnonInner(s)); }
+    public void _t3(final String s) { _test(wrapAsTryWithEmptyFinally(s)); }
+    public void _t4(final String s) { _test(wrapAsFinallyWithEmptyTry(s)); }
 
     public void _t1(final String s, final Throwable e) { _test(e, wrap(s)); }
     public void _t2(final String s, final Throwable e) { _test(e, wrapAnonInner(s)); }
+    public void _t3(final String s, final Throwable e) { _test(e, wrapAsTryWithEmptyFinally(s)); }
+    public void _t4(final String s, final Throwable e) { _test(e, wrapAsFinallyWithEmptyTry(s)); }
 
     // main test methods. verifies that the compiled code returns
     // "foo" (in the first case), or throws a given error (in the
@@ -124,11 +137,15 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
     public void _t(final String s) {
         _t1(s);
         _t2(s);
+        _t3(s);
+        _t4(s);
     }
 
     public void _t(final String s, final Throwable e) {
         _t1(s, e);
         _t2(s, e);
+        _t3(s, e);
+        _t4(s, e);
     }
 
     // actual tests (phew)...
