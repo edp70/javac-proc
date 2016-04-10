@@ -2,62 +2,7 @@
 
 turn these TODO items into github issues?
 
-== bugs ==
-
- * FullCheckerTest is failing. Checker is rejecting code due to
-   initialization issue with the generated variable holding the return
-   value.
-
-/Foo.java:1: error: [return.type.incompatible] incompatible types in return.
-public class Foo {
-       ^
-  found   : @UnknownInitialization @Nullable String
-  required: @Initialized @NonNull String
-1 error
-/Foo.java:1: error: [return.type.incompatible] incompatible types in return.
-public class Foo { public int foo() { while (true) { try { break; } finally { return 1; }}}}
-       ^
-  found   : @UnknownInitialization @NonNull int
-  required: @Initialized @NonNull int
-1 error
-------------- ---------------- ---------------
-Testcase: testTryWithBreak(edp.javac.proc.FullCheckerTest):	Caused an ERROR
-compile failed
-java.lang.RuntimeException: compile failed
-	at edp.javac.compiler.CompilerImpl.run(CompilerImpl.java:138)
-	at edp.javac.compiler.CompilerImpl.compileAndLoad(CompilerImpl.java:118)
-	at edp.javac.compiler.AbstractTryTests.run(AbstractTryTests.java:40)
-	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:71)
-	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:75)
-	at edp.javac.compiler.AbstractTryTests._t1(AbstractTryTests.java:107)
-	at edp.javac.compiler.AbstractTryTests._t(AbstractTryTests.java:118)
-	at edp.javac.compiler.AbstractTryTests.testTryWithBreak(AbstractTryTests.java:200)
-
-
-Testcase: test1c(edp.javac.proc.FullCheckerTest):	Caused an ERROR
-compile failed
-java.lang.RuntimeException: compile failed
-	at edp.javac.compiler.CompilerImpl.run(CompilerImpl.java:138)
-	at edp.javac.compiler.CompilerImpl.compileAndLoad(CompilerImpl.java:118)
-	at edp.javac.compiler.AbstractTryTests.run(AbstractTryTests.java:40)
-	at edp.javac.compiler.AbstractTryTests._test(AbstractTryTests.java:71)
-	at edp.javac.compiler.AbstractTryTests.test1c(AbstractTryTests.java:316)
-
-   Reducing the "test1c" issue to the following testcase:
-
-       public class T {
-           public int foo() {
-               int ans;
-               while (true) {
-                   ans = 0;
-                   break;
-               }
-               return ans;
-           }
-       }
-
-   Plain javac accepts that, but (plain) Checker does not. Looks like
-   the same problem as with "if (true)"...
+bugs have been moved to github issue tracker.
 
 == testing ==
 
