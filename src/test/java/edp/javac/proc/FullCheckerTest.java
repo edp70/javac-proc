@@ -20,25 +20,29 @@ public class FullCheckerTest extends AbstractTryTests {
     @Override
     public void test1c() {
         try { super.test1c(); }
-        catch (Throwable xfail) { xfail(xfail); }
+        catch (Throwable xfail) { xfail(xfail); return; }
+        xpass();
     }
 
     @Override
     public void test1cTransformed() {
         try { super.test1c(); }
-        catch (Throwable xfail) { xfail(xfail); }
+        catch (Throwable xfail) { xfail(xfail); return; }
+        xpass();
     }
 
     @Override
     public void testTryWithBreak() {
         try { super.testTryWithBreak(); }
-        catch (Throwable xfail) { xfail(xfail); }
+        catch (Throwable xfail) { xfail(xfail); return; }
+        xpass();
     }
 
     /** (Failing) testcase for https://github.com/edp70/javac-proc/issues/2 */
     @Override
     public void testNonEmptyFinally4() {
         try { super.testNonEmptyFinally4(); }
-        catch (Throwable xfail) { xfail(xfail); }
+        catch (Throwable xfail) { xfail(xfail); return; }
+        xpass();
     }
 }

@@ -17,6 +17,10 @@ public abstract class AbstractTryTests extends junit.framework.TestCase {
         new ExpectedFailure().printStackTrace();
     }
 
+    public static void xpass() {
+        fail("XPASS: testcase expected to fail actually passed; if bug fixed, rm xfail!");
+    }
+
     // static stuff
 
     private static final String FOO = "foo";

@@ -9,6 +9,7 @@ import edp.javac.compiler.CompilerImpl;
 import edp.javac.compiler.AbstractTryTests;
 
 import static edp.javac.compiler.AbstractTryTests.xfail;
+import static edp.javac.compiler.AbstractTryTests.xpass;
 
 public class FooTest extends junit.framework.TestCase {
     public void testFoo() {
@@ -26,7 +27,8 @@ public class FooTest extends junit.framework.TestCase {
         }
         try {
         new T().test1c();
-        } catch (Throwable xfail) { xfail(xfail); }
+        } catch (Throwable xfail) { xfail(xfail); return; }
+        xpass();
     }
 
     public void testBar() {
@@ -41,6 +43,7 @@ public class FooTest extends junit.framework.TestCase {
         }
         try {
         new T().test1cTransformed();
-        } catch (Throwable xfail) { xfail(xfail); }
+        } catch (Throwable xfail) { xfail(xfail); return; }
+        xpass();
     }
 }
