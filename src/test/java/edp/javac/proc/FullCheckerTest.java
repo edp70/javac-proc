@@ -34,4 +34,11 @@ public class FullCheckerTest extends AbstractTryTests {
         try { super.testTryWithBreak(); }
         catch (Throwable xfail) { xfail(xfail); }
     }
+
+    /** (Failing) testcase for https://github.com/edp70/javac-proc/issues/2 */
+    @Override
+    public void testNonEmptyFinally4() {
+        try { super.testNonEmptyFinally4(); }
+        catch (Throwable xfail) { xfail(xfail); }
+    }
 }
