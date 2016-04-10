@@ -57,6 +57,15 @@ public class FinallyRemover extends TreeTranslator {
 
     // impl
 
+    private @Nullable JCMethodDecl currentMethod;
+
+    @Override
+    public void visitMethodDef(final JCMethodDecl m) {
+        final JCMethodDecl prev = currentMethod;
+        super.visitMethodDef(currentMethod = m);
+        currentMethod = prev;
+    }
+
     public void visitTry(final JCTry orig) {
         final JCBlock _finally = orig.finalizer;
         final boolean finallyCanCompleteNormally = orig.finallyCanCompleteNormally;
@@ -298,16 +307,13 @@ public class FinallyRemover extends TreeTranslator {
         return new VarSymbol(Flags.PARAMETER | Flags.FINAL,
                              genName(GENERATED_PREFIX),
                              S.throwableType,
-                             findEnclosingMethod(where).sym);
+                             getCurrentMethod().sym);
     }
 
-    private JCMethodDecl findEnclosingMethod(final JCTree t) {
-        for (TreePath p = TreePath.getPath(U, t); p != null; p = p.getParentPath()) {
-            final Tree node = p.getLeaf();
-            if (node instanceof JCMethodDecl) // what about init blocks... (anything else?)
-                return (JCMethodDecl) node;
-        }
-        throw new RuntimeException("failed to find enclosing method for AST node: " + t);
+    private JCMethodDecl getCurrentMethod() {
+        if (currentMethod == null)
+            throw new AssertionError("no current method");
+        return currentMethod;
     }
 
     // lacking real 'canCompleteNormally', need this when running
